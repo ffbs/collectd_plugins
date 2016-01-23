@@ -43,64 +43,64 @@ server_address = ''
 
 
 def read(data=None):
-	vl = collectd.Values(type='gauge')
-	vl.plugin='python.fastd'
+    vl = collectd.Values(type='gauge')
+    vl.plugin='python.fastd'
 
 
-	try:
-		connections = 0	
-		servers = server_address.split(":")
-		for server in servers:
-			sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-			sock.connect(server)
+    try:
+        connections = 0    
+        servers = server_address.split(":")
+        for server in servers:
+            sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            sock.connect(server)
 
-			received_count = 1
-			received_data = ""
+            received_count = 1
+            received_data = ""
 
-			while received_count > 0:
-				data = sock.recv(1024)
-				received_count = len(data)
-				received_data += data;
+            while received_count > 0:
+                data = sock.recv(1024)
+                received_count = len(data)
+                received_data += data;
 
-			sock.close();
-		
-			received_json = json.loads(received_data);
+            sock.close();
+        
+            received_json = json.loads(received_data);
 
-			for item in received_json["peers"]:
+            for item in received_json["peers"]:
                 p = received_json["peers"][item]
                 if p["connection"]:
                     connections += 1
-		vl.dispatch(values=[connections])
-		
-	except socket.error, msg:
-		collectd.error("[FFMS Fastd] Socket read failed: %s" % (msg))
-	    # vl.dispatch(values=[-1])	
-	
+        vl.dispatch(values=[connections])
+        
+    except socket.error, msg:
+        collectd.error("[FFMS Fastd] Socket read failed: %s" % (msg))
+        # vl.dispatch(values=[-1])    
+    
 
 def write(vl, data=None):
-	for i in vl.values:
-		print "%s (%s): %f" % (vl.plugin, vl.type, i)
+    for i in vl.values:
+        print "%s (%s): %f" % (vl.plugin, vl.type, i)
 
 def config (config):
-	global server_address
-	server_address = ''   #'/tmp/fastd-status'
+    global server_address
+    server_address = ''   #'/tmp/fastd-status'
 
-	for node in config.children:
-		key = node.key.lower()
-		val = node.values[0]
+    for node in config.children:
+        key = node.key.lower()
+        val = node.values[0]
 
-		if key == 'server_address':
-			server_address = val
+        if key == 'server_address':
+            server_address = val
 
-		else:
-			collectd.warning("ffbs_fastd plugin: Unknown configuration key: %s." % key )
-			continue
+        else:
+            collectd.warning("ffbs_fastd plugin: Unknown configuration key: %s." % key )
+            continue
 
-	if server_address == '':
-		collectd.error('ffbs_fastd plugin: No Serveradress configured.' )
-	else:
-		collectd.info("ffbs_fastd plugin: Successful configured with server_address %s." % server_address)
-	
+    if server_address == '':
+        collectd.error('ffbs_fastd plugin: No Serveradress configured.' )
+    else:
+        collectd.info("ffbs_fastd plugin: Successful configured with server_address %s." % server_address)
+    
 collectd.register_read(read);
 collectd.register_write(write);
 collectd.register_config(config);
