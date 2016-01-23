@@ -66,9 +66,10 @@ def read(data=None):
 		
 			received_json = json.loads(received_data);
 
-			for item in received_json.items()[2][1].items():
-				connection = item[1]
-				connections += 1
+			for item in received_json["peers"]:
+                p = received_json["peers"][item]
+                if p["connection"]:
+                    connections += 1
 		vl.dispatch(values=[connections])
 		
 	except socket.error, msg:
