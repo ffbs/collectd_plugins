@@ -48,9 +48,9 @@ def read(data=None):
 
 
     try:
-        connections = 0    
         servers = server_address.split(":")
         for server in servers:
+            connections = 0    
             sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             sock.connect(server)
 
@@ -70,8 +70,8 @@ def read(data=None):
                 p = received_json["peers"][item]
                 if p["connection"]:
                     connections += 1
-        vl.type_instance = server.split('/')[-1] 
-        vl.dispatch(values=[connections])
+            vl.type_instance = server.split('/')[-1] 
+            vl.dispatch(values=[connections])
         
     except socket.error, msg:
         collectd.error("[FFMS Fastd] Socket read failed: %s" % (msg))
