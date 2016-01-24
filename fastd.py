@@ -44,7 +44,7 @@ server_address = ''
 
 def read(data=None):
     vl = collectd.Values(type='gauge')
-    vl.plugin='python.fastd'
+    vl.plugin='fastd_connections'
 
 
     try:
@@ -70,6 +70,7 @@ def read(data=None):
                 p = received_json["peers"][item]
                 if p["connection"]:
                     connections += 1
+        vl.type_instance = server.split('/')[-1] 
         vl.dispatch(values=[connections])
         
     except socket.error, msg:
