@@ -74,7 +74,7 @@ def read(data=None):
             vl.dispatch(values=[connections])
         
     except socket.error, msg:
-        collectd.error("[FFMS Fastd] Socket read failed: %s" % (msg))
+        collectd.error("[ffbs Fastd] Socket read failed: %s" % (msg))
         # vl.dispatch(values=[-1])    
     
 
