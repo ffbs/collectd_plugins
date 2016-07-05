@@ -38,6 +38,7 @@ import collectd
 import socket
 import sys
 import json
+import glob
 
 server_address = ''
 
@@ -92,6 +93,8 @@ def config (config):
 
         if key == 'server_address':
             server_address = val
+            if server_address == '':
+                server_address = glob.glob('/tmp/fastd*.socket')
 
         else:
             collectd.warning("ffbs_fastd plugin: Unknown configuration key: %s." % key )
